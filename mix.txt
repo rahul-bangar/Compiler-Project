@@ -1,0 +1,6 @@
++       a       1       t0
+=       t0      (null)  a
++       c       1       t1
+=       t1      (null)  c
++       b       1       t2
+=       t2      (null)  b
