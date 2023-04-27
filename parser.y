@@ -43,9 +43,9 @@ extern int countn;
 struct intermediate
 {
 	char op[2];
-	char op1[5];
-	char op2[5];
-	char res[5];
+	char op1[10];
+	char op2[10];
+	char res[10];
 }intermediate_code[20];
 int code=0;
 struct node1{ struct node1*left;struct node1*right;char* token;};
@@ -288,6 +288,8 @@ int main()
 	
 	extern int yylineno;
 	x.val=10;
+	printf("\t\t\tLexically Correct\n");
+	printf("\t\t\tSyntax Correct \n");
 	printf("\n\n#######################################################################################\n");
 	printf("\t\t\tIntermediate code\n");
 	printf("#######################################################################################\n");
@@ -574,6 +576,7 @@ void printtree(struct node1* tree)
 
  
 }
+
 void optimized()
 {
 
@@ -673,8 +676,14 @@ for(i=0;i<code;i++)
 	printf("\t\t\tOptimized Code\n");
 	printf("#######################################################################################\n");
 
+
+	FILE *fp = fopen("mix.txt","w");
 for (i=0;i<code;i++){
-    printf("\t\t\t%s\t%s\t%s\t%s\n",intermediate_code[i].op,intermediate_code[i].op1,intermediate_code[i].op2,intermediate_code[i].res);
+	if (intermediate_code[i].op2[0] == '\0') {
+		strcpy(intermediate_code[i].op2, "(null)");
+	}
+	printf("\t\t\t%s\t%s\t%s\t%s\n",intermediate_code[i].op,intermediate_code[i].op1,intermediate_code[i].op2,intermediate_code[i].res);
+	fprintf(fp, "%s\t\t%s\t\t%s\t\t%s\n",intermediate_code[i].op,intermediate_code[i].op1,intermediate_code[i].op2,intermediate_code[i].res);
 
 }
 
