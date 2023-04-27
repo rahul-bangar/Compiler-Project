@@ -673,9 +673,10 @@ for(i=0;i<code;i++)
 	printf("\t\t\tOptimized Code\n");
 	printf("#######################################################################################\n");
 
-for (i=0;i<code;i++)
+for (i=0;i<code;i++){
     printf("\t\t\t%s\t%s\t%s\t%s\n",intermediate_code[i].op,intermediate_code[i].op1,intermediate_code[i].op2,intermediate_code[i].res);
 
+}
 
 	printf("#######################################################################################\n");
 }
