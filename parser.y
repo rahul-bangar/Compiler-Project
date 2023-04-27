@@ -29,7 +29,7 @@ struct dataType{
 	char * data_type;
 	char * type;
 	int line_no;
-	}symbolTable[100];
+	}parser[100];
 int ifd=0;//Label
 int eld=20;
 char typeStack[10][100];
@@ -101,10 +101,10 @@ S:	S1
 
 
 
-S1 :	IF{add('k');} '(' C ')'{printf("\n Label\t%s:\n",$4.tr);}'{'{addTo('{',"Punctuations");} S '}'{addTo('}',"Punctuations");
+S1 :	IF{add('k');} '(' C ')'{printf("Label\t%s:\n",$4.tr);}'{'{addTo('{',"Punctuations");} S '}'{addTo('}',"Punctuations");
 	pop();
-	printf("goto next\n");
-	printf("\nLabel\t%s:\n",$4.fal);} EL {$$.nd=mknode($4.nd,$9.nd,"IF");
+	printf("goto next");
+	printf("Label\t%s:\n",$4.fal);} EL {$$.nd=mknode($4.nd,$9.nd,"IF");
 	strcpy($$.name,"IF");}
 	|assign {$$.nd=$1.nd;}
 	|M ID TER {$$.nd=mknode(NULL,NULL,"definition"); int i=sym_search($2.name);if(i!=-1)
@@ -121,7 +121,7 @@ S2:
 	WHILE{add('k'); sprintf(nL,"L%d",ifd);ifd++;printf("\n Label \t %s : \n",nL);} '(' C ')'{printf("\n Label\t%s:\n",$4.tr);}'{'{addTo('{',"Punctuations");} S '}'{addTo('}',"Punctuations");
 	pop();
 	printf("goto %s\n",nL);
-	printf("\nLabel\t%s:\n",$4.fal);} EL {$$.nd=mknode($4.nd,$9.nd,"WHILE");
+	printf("Label\t%s:\n",$4.fal);} EL {$$.nd=mknode($4.nd,$9.nd,"WHILE");
 	strcpy($$.name,"WHILE");}
 	|assign {$$.nd=$1.nd;}
 	|M ID TER {$$.nd=mknode(NULL,NULL,"definition"); int i=sym_search($2.name);if(i!=-1)
@@ -149,7 +149,7 @@ B : 	E relop E {$$.nd=mknode($1.nd,$3.nd,$2.name);
    	int i=search($1.name);
    	int j=search($3.name);
    	if(i!=0&&j!=0){
-   	printf("if %s %s %s \ngoto L%d \nelse goto L%d\n",$1.name,$2.name,$3.name,ifd,eld);
+   	printf("if %s %s %s goto L%d \nelse goto L%d\n",$1.name,$2.name,$3.name,ifd,eld);
    sprintf($$.tr,"L%d",ifd);
    sprintf($$.fal,"L%d",eld);ifd++;eld++;}   
    else{printf(" Variable not declared at line no: %d\n", yylineno);exit(0);}}   
@@ -297,24 +297,24 @@ int main()
 	
 	printf("\n\tParsing is Successful\n");	
 	printf("\n\n#######################################################################################\n");
-	printf("\t\t\tSymbol table\n");
+	printf("\t\t\t\tParser\n");
 	printf("#######################################################################################\n");	
 	printf("\n\t\t\tsymbol \t\t type  \t\t identify \t\t line number\n");
 	printf("_______________________________________________________________________________________\n");
 	int i=0;
 	for(i=0;i<100;i++){
-		if(symbolTable[i].id_name!=NULL){
+		if(parser[i].id_name!=NULL){
 			if(i<2){
-				printf("\t\t%s\t%s\t\t%s\t\t\t%d\t\n",symbolTable[i].id_name,symbolTable[i].data_type,symbolTable[i].type,symbolTable[i].line_no);
+				printf("\t\t%s\t%s\t\t%s\t\t\t%d\t\n",parser[i].id_name,parser[i].data_type,parser[i].type,parser[i].line_no);
 			}
 			else{
-				printf("\t\t%s\t\t\t%s\t\t%s\t\t%d\t\n",symbolTable[i].id_name,symbolTable[i].data_type,symbolTable[i].type,symbolTable[i].line_no);
+				printf("\t\t%s\t\t\t%s\t\t%s\t\t%d\t\n",parser[i].id_name,parser[i].data_type,parser[i].type,parser[i].line_no);
 			}
 		}
 	}
 	for(i=0;i<count;i++){
-		free(symbolTable[i].id_name);
-		free(symbolTable[i].type);
+		free(parser[i].id_name);
+		free(parser[i].type);
 	}
 	return 0;
 }
@@ -323,7 +323,7 @@ void yyerror(const char* s)
 	printf("Not accepted\n");
 	exit(0);
 }
-//insert the type into symboltable
+//insert the type into parser
 void insert_type(){
 
 	
@@ -333,10 +333,10 @@ void insert_type(){
 	//printf("qval=%d",q);
 	if(q==0){
 		
-		symbolTable[count].id_name=strdup(yytext);
-		symbolTable[count].data_type=strdup("N/A");
-		symbolTable[count].line_no = countn;
-		symbolTable[count].type=strdup("KEYWORD\t");
+		parser[count].id_name=strdup(yytext);
+		parser[count].data_type=strdup("N/A");
+		parser[count].line_no = countn;
+		parser[count].type=strdup("KEYWORD\t");
 		count++;
 	}
 	
@@ -361,7 +361,7 @@ void pop()
 	int temp=count-1;
 	for(i=temp;i>=0;i--)
 	{
-		if(strcmp(symbolTable[i].id_name,"{")!=0)
+		if(strcmp(parser[i].id_name,"{")!=0)
 		{
 			//printf("$$\n");
 			count=count-1;;
@@ -375,47 +375,47 @@ void pop()
 	
 
 }
-//add declaration of data to symboltable
+//add declaration of data to parser
 void addTo(char i,char *n)
 {
 	if(i=='i')
 	{
-			symbolTable[count].id_name=strdup(n);
-			symbolTable[count].data_type="int";
-			symbolTable[count].line_no = countn;
-			symbolTable[count].type=strdup("variable");
+			parser[count].id_name=strdup(n);
+			parser[count].data_type="int";
+			parser[count].line_no = countn;
+			parser[count].type=strdup("variable");
 			count++;
 	}
 	else if(i=='f')
 	{
-			symbolTable[count].id_name=strdup(n);
-			symbolTable[count].data_type="float";
-			symbolTable[count].line_no = countn;
-			symbolTable[count].type=strdup("variable");
+			parser[count].id_name=strdup(n);
+			parser[count].data_type="float";
+			parser[count].line_no = countn;
+			parser[count].type=strdup("variable");
 			count++;
 	}
 	else if(i=='c')
 	{
-			symbolTable[count].id_name=strdup(n);
-			symbolTable[count].data_type="char";
-			symbolTable[count].line_no = countn;
-			symbolTable[count].type=strdup("variable");
+			parser[count].id_name=strdup(n);
+			parser[count].data_type="char";
+			parser[count].line_no = countn;
+			parser[count].type=strdup("variable");
 			count++;
 	}
 	else if(i=='{')
 	{
-			symbolTable[count].id_name=strdup("{");;
-			symbolTable[count].data_type="N/A";
-			symbolTable[count].line_no = countn;
-			symbolTable[count].type=strdup("punctuation");
+			parser[count].id_name=strdup("{");;
+			parser[count].data_type="N/A";
+			parser[count].line_no = countn;
+			parser[count].type=strdup("punctuation");
 			count++;
 	}
 	else if(i=='}')
 	{
-			symbolTable[count].id_name=strdup("}");;
-			symbolTable[count].data_type="N/A";
-			symbolTable[count].line_no = countn;
-			symbolTable[count].type=strdup("punctuation");
+			parser[count].id_name=strdup("}");;
+			parser[count].data_type="N/A";
+			parser[count].line_no = countn;
+			parser[count].type=strdup("punctuation");
 			count++;
 	}
 
@@ -428,8 +428,8 @@ char temptype(char* one,char* two)
 	char* twotype;
 	for(y = 0;y<count;y++)
 	{
-		if(strcmp(symbolTable[y].id_name,one)==0) onetype=symbolTable[y].data_type;
-		if(strcmp(symbolTable[y].id_name,two)==0) twotype=symbolTable[y].data_type;	
+		if(strcmp(parser[y].id_name,one)==0) onetype=parser[y].data_type;
+		if(strcmp(parser[y].id_name,two)==0) twotype=parser[y].data_type;	
 	}
 	if((strcmp(onetype,"float")==0) || (strcmp(twotype,"float")==0))
 		return 'f';
@@ -441,10 +441,10 @@ void insert_type_table(){
 		q=search(yytext);
 	
 		if(q==0){
-			symbolTable[count].id_name=strdup(yytext);
-			symbolTable[count].data_type=strdup(type);
-			symbolTable[count].line_no = countn;
-			symbolTable[count].type=strdup("IDENTIFIER");
+			parser[count].id_name=strdup(yytext);
+			parser[count].data_type=strdup(type);
+			parser[count].line_no = countn;
+			parser[count].type=strdup("IDENTIFIER");
 			count++;
 		}
 	
@@ -457,72 +457,72 @@ void type_check(char* one, char* two)
 	char* twotype;
 	for(y = 0;y<count;y++)
 	{
-		if(strcmp(symbolTable[y].id_name,one)==0) onetype=symbolTable[y].data_type;
-		if(strcmp(symbolTable[y].id_name,two)==0) twotype=symbolTable[y].data_type;	
+		if(strcmp(parser[y].id_name,one)==0) onetype=parser[y].data_type;
+		if(strcmp(parser[y].id_name,two)==0) twotype=parser[y].data_type;	
 	}
 	if(strcmp(onetype,twotype)>0){ printf("type error at lineno %d\n",yylineno);exit(0);}
 }
-//ADD the recent parsed string into symboltable
+//ADD the recent parsed string into Table
 void add(char c)
 {
 	q=search(yytext);
 	if(q==0){
 		if(c=='H')
 		{
-			symbolTable[count].id_name=strdup(yytext);
-			symbolTable[count].data_type=strdup(type);
-			symbolTable[count].line_no = countn;
-			symbolTable[count].type=strdup("Header");
+			parser[count].id_name=strdup(yytext);
+			parser[count].data_type=strdup(type);
+			parser[count].line_no = countn;
+			parser[count].type=strdup("Header");
 			count++;
 		}
 		else if(c=='t')
 		{	
-			symbolTable[count].id_name=strdup(yytext);
-			symbolTable[count].data_type=strdup("N/A");
-			symbolTable[count].line_no = countn;
-			symbolTable[count].type=strdup("Punctuation");
+			parser[count].id_name=strdup(yytext);
+			parser[count].data_type=strdup("N/A");
+			parser[count].line_no = countn;
+			parser[count].type=strdup("Punctuation");
 			count++;
 		}
 		else if(c=='o')
 		{
-			symbolTable[count].id_name=strdup(yytext);
-			symbolTable[count].data_type=strdup("N/A");
-			symbolTable[count].line_no = countn;
-			symbolTable[count].type=strdup("Operator");
+			parser[count].id_name=strdup(yytext);
+			parser[count].data_type=strdup("N/A");
+			parser[count].line_no = countn;
+			parser[count].type=strdup("Operator");
 			count++;
 		}
 		else if(c=='r')
 		{
-			symbolTable[count].id_name=strdup(yytext);
-			symbolTable[count].data_type=strdup("N/A");
-			symbolTable[count].line_no = countn;
-			symbolTable[count].type=strdup("Rel Op\t");
+			parser[count].id_name=strdup(yytext);
+			parser[count].data_type=strdup("N/A");
+			parser[count].line_no = countn;
+			parser[count].type=strdup("Rel Op\t");
 			count++;
 		}
 		else if(c=='k')
 		{
 						
-			symbolTable[count].id_name=strdup(yytext);
-			symbolTable[count].data_type=strdup("N/A");
-			symbolTable[count].line_no = countn;
-			symbolTable[count].type=strdup("KEYWORD\t");
-			//printf("ADDDDDDDDD%s\n",symbolTable[count].id_name);
+			parser[count].id_name=strdup(yytext);
+			parser[count].data_type=strdup("N/A");
+			parser[count].line_no = countn;
+			parser[count].type=strdup("KEYWORD\t");
+			//printf("ADDDDDDDDD%s\n",parser[count].id_name);
 			count++;
 		}
 		else if(c=='n')
 		{
-			symbolTable[count].id_name=strdup(yytext);
-			symbolTable[count].data_type=strdup("int");
-			symbolTable[count].line_no = countn;
-			symbolTable[count].type=strdup("NUMBER\t");
+			parser[count].id_name=strdup(yytext);
+			parser[count].data_type=strdup("int");
+			parser[count].line_no = countn;
+			parser[count].type=strdup("NUMBER\t");
 			count++;
 		}
 	else if(c=='f')
 		{
-			symbolTable[count].id_name=strdup(yytext);
-			symbolTable[count].data_type=strdup("N/A");
-			symbolTable[count].line_no = countn;
-			symbolTable[count].type=strdup("FUNCTION\t");
+			parser[count].id_name=strdup(yytext);
+			parser[count].data_type=strdup("N/A");
+			parser[count].line_no = countn;
+			parser[count].type=strdup("FUNCTION\t");
 			count++;
 		}
 	}
@@ -530,9 +530,9 @@ void add(char c)
 int  sym_search(char *type)
 {
 	int i;
-	for(i=count -1 ;i>=0&&(strcmp(symbolTable[i].id_name,"{")!=0);i--)
+	for(i=count -1 ;i>=0&&(strcmp(parser[i].id_name,"{")!=0);i--)
 	{
-		if(strcmp(symbolTable[i].id_name,type)==0)
+		if(strcmp(parser[i].id_name,type)==0)
 		{
 			return -1;
 			break;
@@ -547,7 +547,7 @@ int  search(char *type)
 	int i;
 	for(i=count -1 ;i>=0;i--)
 	{
-		if(strcmp(symbolTable[i].id_name,type)==0)
+		if(strcmp(parser[i].id_name,type)==0)
 		{
 			return -1;
 			break;
@@ -587,6 +587,7 @@ int k;
 char yay[10];
 int len;
 int rem;
+
 for (i=0;i<code;i++)// Common Subexpression Elimination
     for(j=i+1;j<code;j++)
         if(strcmp(intermediate_code[i].op,intermediate_code[j].op)==0)
