@@ -266,6 +266,9 @@ def assembly_gen(instructions):
 			check_destination(instructions[i][3], i)		
 
 instructions = read_quadruples("mix.txt")
+print("=========================================")
+print("Machine Code generated below:")
+print("=========================================")
 
 number_of_registers = 16
 available_registers = initialize_register_list()
