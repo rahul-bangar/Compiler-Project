@@ -265,7 +265,7 @@ def assembly_gen(instructions):
 			check_source(instructions[i][1], i)
 			check_destination(instructions[i][3], i)		
 
-instructions = read_quadruples("mix.txt")
+instructions = read_quadruples("GenInput.txt")
 print("\n\n")
 print("=========================================")
 print("Machine Code generated below:")
