@@ -678,7 +678,7 @@ for(i=0;i<code;i++)
 	printf("#######################################################################################\n");
 
 
-	FILE *fp = fopen("mix.txt","w");
+	FILE *fp = fopen("GenInput.txt","w");
 for (i=0;i<code;i++){
 	if (intermediate_code[i].op2[0] == '\0') {
 		strcpy(intermediate_code[i].op2, "(null)");
