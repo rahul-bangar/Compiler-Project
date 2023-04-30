@@ -47,4 +47,3 @@ while   return WHILE;
 
 %%
 int yywrap (){return 1;}
-
