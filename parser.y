@@ -10,16 +10,16 @@ char nL[3];
 void yyerror(const char*);
 int yylex();
 int yywrap();
-void insert_type();
-void add(char);
-int sym_search(char *);
-int search(char *);
-void addTo(char i,char *n);
+void insert_type();	// new data type into the symbol table
+void add(char);		// adds a new character to a string
+int sym_search(char *);	// searches for a symbol in the symbol table and returns its index
+int search(char *);	// searches for a variable in the symbol table and returns its index
+void addTo(char i,char *n);		// adds a datatype to the symbol table
 void FOO();
-void add_ptr();
+void add_ptr();		// adds a pointer to the stack
 void pop();
-void insert_type_table();
-char temptype(char *,char*);
+void insert_type_table();	// inserts a new data type into the data type table
+char temptype(char *,char*);	// creates a temporary data type
 void type_check(char *,char*);
 void printtree(struct node1*);
 void optimized();
@@ -35,7 +35,7 @@ int eld=20;
 char typeStack[10][100];
 int typeStack_top = 0;
 char type[10];
-char count=0;
+char count=0;	//to track no of variables
 int nxt=1;//printed next once
 int c=0;//Temp var count
 int q;
@@ -394,7 +394,7 @@ void pop()
 	
 
 }
-//add declaration of data to parser
+//add declaration of datatype to parser
 void addTo(char i,char *n)
 {
 	if(i=='i')
@@ -604,7 +604,7 @@ int k;
 char yay[10];
 int len;
 int rem;
-
+// check where the same operation is performed with the same operands - check result and replace
 for (i=0;i<code;i++)// Common Subexpression Elimination
     for(j=i+1;j<code;j++)
         if(strcmp(intermediate_code[i].op,intermediate_code[j].op)==0)
@@ -638,6 +638,7 @@ for (i=0;i<code;i++)// Common Subexpression Elimination
             }
 
 //constant Folding
+// checking whether both operands of an operation are constants
 for(i=0;i<code;i++)
     {
         n=strlen(intermediate_code[i].op1);

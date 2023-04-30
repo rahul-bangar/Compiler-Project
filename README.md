@@ -1,4 +1,4 @@
-# If-Else-While-Compiler-in-C
+# C/C++ Compiler for while loop with nested while loop and/or if-else constructs.
 
 Simulation of the front-end and back-end phase of a C compiler involving the If-Else, While and nested If-Else-While constructs.</br>
 This includes SIX phases of a compiler:</br>

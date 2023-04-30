@@ -125,10 +125,10 @@ if __name__ == "__main__":
 
     print("\n")
 
-    # Input
-    print("Generated ICG given as input for optimization: \n")
-    showICG(allLines)
-    print("\n")
+    # # Input
+    # print("Generated ICG given as input for optimization: \n")
+    # showICG(allLines)
+    # print("\n")
 
     # Elimination of Common Subexpressions
     icgAfterEliminationOfCommonSubexpressions = eliminateCommonSubexpressions(

@@ -68,7 +68,7 @@ def reg_alloc(value, to_be_loaded):	# remember to load when returned. Also rtv c
 
 	if(value.isnumeric()):
 		return "#" + value
-	else:
+	else:	#variable
 		if value in variable_register_mapping:
 			used_registers.remove(variable_register_mapping[value])
 			used_registers.append(variable_register_mapping[value])
@@ -115,7 +115,7 @@ def map_variable_lines(instructions):
 			# print(source_variable_lines_mapping)
 			# print(common_variable_lines_mapping)
 		
-		else:
+		else:	# arithmatic operators
 			add_variable_to_line_mapping(instructions[i][1], i, source_variable_lines_mapping)
 			add_variable_to_line_mapping(instructions[i][2], i, source_variable_lines_mapping)
 			add_variable_to_line_mapping(instructions[i][1], i, common_variable_lines_mapping)
@@ -205,9 +205,9 @@ def assembly_gen(instructions):
 			elif instructions[i][0] == ">=":
 				print("BLE", instructions[i][3])
 			elif instructions[i][0] == "==":
-				print("BNE", instructions[i][3])
-			elif instructions[i][0] == "!=":
 				print("BEQ", instructions[i][3])
+			elif instructions[i][0] == "!=":
+				print("BNE", instructions[i][3])
 
 			source_variable_lines_mapping[instructions[i][1]].remove(i)
 			source_variable_lines_mapping[instructions[i][2]].remove(i)
@@ -257,7 +257,7 @@ def assembly_gen(instructions):
 			check_destination(instructions[i][3], i)
 		
 
-		else:
+		else:	# = (assignment)
 			reg1 = reg_alloc(instructions[i][3], 0)		
 			reg2 = reg_alloc(instructions[i][1], 1)
 			print("MOV", reg1, reg2)
