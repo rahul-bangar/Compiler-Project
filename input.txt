@@ -11,7 +11,7 @@ int main(int argv,char *argc[])
 	int f;
 	int i;
 	int j;
-	(a<10)
+	while(a<10)
 	{
 		i=a+2;
 		j=b+2;
@@ -23,6 +23,9 @@ int main(int argv,char *argc[])
 				i=a+2;
 				j=b+2;
 				d=d+1;
+				if(e<10){
+					f=f+1;
+				}
 				else
 				{
 					e=e+1;

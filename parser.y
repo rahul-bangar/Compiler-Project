@@ -582,7 +582,6 @@ void printtree(struct node1* tree)
 {
   if (tree->left)
 	{
-
 		printtree(tree->left);
 	}
  printf(" \t%s , ", tree->token);
