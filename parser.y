@@ -52,9 +52,10 @@ struct node1{ struct node1*left;struct node1*right;char* token;};
 struct node1* mknode(struct node1 *left,struct node1 *right, char *token);
 
 %}
-%union { struct var_name {char name[100];struct node1* nd;} nam ; 
-	struct gen_code{char tr[10];char fal[10];struct node1* nd;} gen;
-	 } 
+%union { 
+		struct var_name {char name[100];struct node1* nd;} nam ; 
+		struct gen_code{char tr[10];char fal[10];struct node1* nd;} gen;
+} 
 %token <nam> IF ELSE INT FLOAT CHAR WHILE
 %token VOID INCLUDE RETURN 
 %token <nam> LE GE LT GT EQ NE NUM AND OR TR FL STRLT ID printff scanff
@@ -67,33 +68,53 @@ struct node1* mknode(struct node1 *left,struct node1 *right, char *token);
 
 %%
 
-
-P : I M ID {insert_type_table();} '('{add('t');} R ')'{add('t');} '{'{add('t');} S { printf("Label next:\n");}  U '}'{$$.nd = mknode(NULL,$12.nd,"start");
-printf("\n\n#######################################################################################\n");
-printf("\t\t\tSyntax Tree in Inorder traversal\n");
-printf("#######################################################################################\n");
-printtree($$.nd);
-printf("\n\n");
-add('t');
-optimized();};
+// Grammar Rules:
+P : I M ID {insert_type_table();} 
+	'('{add('t');} 
+	R 
+	')'{add('t');} 
+	'{'{add('t');}
+	S { printf("Label next:\n");}  
+	U 
+	'}'{
+		$$.nd = mknode(NULL,$12.nd,"start");
+		printf("\n\n#######################################################################################\n");
+		printf("\t\t\tSyntax Tree in Inorder traversal\n");
+		printf("#######################################################################################\n");
+		printtree($$.nd);
+		printf("\n\n");
+		add('t');
+		optimized();
+	};
 I : I I | INCLUDE {add('H');} ;
+
 M : INT{insert_type();} | FLOAT{insert_type();}| CHAR{insert_type();} | VOID{insert_type();} ;
+
 R : R ','{add('t');} R | M N TER | N TER;
 
 TER : ';'{add('t');} | ;
-N : ID{insert_type_table();} G | '*'{add_ptr();} N ; 
-G : '['{add('t');} NUM {add('n');}']' G |  '['ID ']' G | '['{add('t');} ']' G |  ;
 
-U : RETURN NUM {add('n');} ';'{add('t');printf("Return\t%s\n",$2.name);} | RETURN ID ';' {add('t');printf("Return\t%s\n",$2.name);}| ;
+N : ID{insert_type_table();} G | '*'{add_ptr();} N ; 
+
+G : '['{add('t');} NUM {add('n');}']' G |  
+	'['ID ']' G |
+	'['{add('t');} ']' G |  ;
+
+U : RETURN NUM {add('n');} ';'{add('t');printf("Return\t%s\n",$2.name);} | 
+	RETURN ID ';' {add('t');printf("Return\t%s\n",$2.name);}| ;
 
 S:	S1
 	|S2
 	|assign {$$.nd=$1.nd;}
-	|M ID TER {$$.nd=mknode(NULL,NULL,"definition"); int i=sym_search($2.name);if(i!=-1)
-	{if(strcmp($1.name,"int")==0){addTo('i',$2.name);}
-	else if(strcmp($1.name,"float")==0)addTo('f',$2.name);
-	else addTo('c',$2.name);}
-	else{printf("Variable already defined, error at line no: %d\n",yylineno);exit(0);}}
+	|M ID TER {$$.nd=mknode(NULL,NULL,"definition"); int i=sym_search($2.name);if(i!=-1){
+			if(strcmp($1.name,"int")==0){
+				addTo('i',$2.name);
+			}
+			else if(strcmp($1.name,"float")==0)addTo('f',$2.name);
+			else addTo('c',$2.name);
+		}
+		else{printf("Variable already defined, error at line no: %d\n",yylineno);exit(0);}
+	}
 	|S S {$$.nd=mknode($1.nd,$2.nd,"statement");strcpy($$.name,"STATEMENT");}
 	|printff  {add('f');} '(' STRLT ')'';' {$$.nd = mknode(NULL,NULL,"printf");}
 	|scanff {add('f');}'('STRLT ',''&'ID')' ';'{$$.nd = mknode(NULL,NULL,"scanf");}
@@ -288,8 +309,6 @@ int main()
 	
 	extern int yylineno;
 	x.val=10;
-	printf("\t\t\tLexically Correct\n");
-	printf("\t\t\tSyntax Correct \n");
 	printf("\n\n#######################################################################################\n");
 	printf("\t\t\tIntermediate code\n");
 	printf("#######################################################################################\n");
@@ -506,7 +525,6 @@ void add(char c)
 			parser[count].data_type=strdup("N/A");
 			parser[count].line_no = countn;
 			parser[count].type=strdup("KEYWORD\t");
-			//printf("ADDDDDDDDD%s\n",parser[count].id_name);
 			count++;
 		}
 		else if(c=='n')
@@ -564,7 +582,6 @@ void printtree(struct node1* tree)
 {
   if (tree->left)
 	{
-
 		printtree(tree->left);
 	}
  printf(" \t%s , ", tree->token);
@@ -651,31 +668,17 @@ for(i=0;i<code;i++)
                 {
                     m=j/k;
                 }
-               /* j = m;
-                while (j != 0)
-                {
-                    len++;
-                    j /= 10;
-                }
-                for (i = 0; i < len; i++)
-                {
-                    rem = j % 10;
-                    j = j / 10;
-                    yay[len - (i + 1)] = rem + '0';
-                }
-                yay[len] = '\0';*/
                 strcpy(intermediate_code[i].op,"=");
 				sprintf(intermediate_code[i].op1,"%d",m);
-                //strcpy(intermediate_code[i].op1,yay);
                 strcpy(intermediate_code[i].op2,"");
                 
             }
     }
             
-
 	printf("\n\n#######################################################################################\n");
-	printf("\t\t\tOptimized Code\n");
+	printf("\t\t\tQuadruples\n");
 	printf("#######################################################################################\n");
+	printf("\t\t\tOperator\tOperand1\tOperand2\tResult\n");
 
 
 	FILE *fp = fopen("GenInput.txt","w");
@@ -683,7 +686,7 @@ for (i=0;i<code;i++){
 	if (intermediate_code[i].op2[0] == '\0') {
 		strcpy(intermediate_code[i].op2, "(null)");
 	}
-	printf("\t\t\t%s\t%s\t%s\t%s\n",intermediate_code[i].op,intermediate_code[i].op1,intermediate_code[i].op2,intermediate_code[i].res);
+	printf("\t\t\t%s\t\t%s\t\t%s\t\t%s\n",intermediate_code[i].op,intermediate_code[i].op1,intermediate_code[i].op2,intermediate_code[i].res);
 	fprintf(fp, "%s\t\t%s\t\t%s\t\t%s\n",intermediate_code[i].op,intermediate_code[i].op1,intermediate_code[i].op2,intermediate_code[i].res);
 
 }

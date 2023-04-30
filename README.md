@@ -20,4 +20,3 @@ Few informations about the files -
 - OpInput.txt - Three address code INPUT for Code optimization.
 - Python scripts are used for Assembly code generation from quadruples.
 - Extra 1 python script is given to show separate Code Optimization.
-
